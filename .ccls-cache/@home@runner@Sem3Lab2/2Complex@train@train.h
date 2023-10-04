@@ -1,7 +1,7 @@
 #ifndef TRAIN_H
 #define TRAIN_H
 
-#include "train/wagon.h"
+#include "wagon.h"
 
 using namespace lab2SimpleClass;
 

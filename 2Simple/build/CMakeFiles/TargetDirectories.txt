@@ -1,0 +1,6 @@
+/home/runner/Sem3Lab2/2Simple/build/CMakeFiles/simpleClass.dir
+/home/runner/Sem3Lab2/2Simple/build/CMakeFiles/edit_cache.dir
+/home/runner/Sem3Lab2/2Simple/build/CMakeFiles/rebuild_cache.dir
+/home/runner/Sem3Lab2/2Simple/build/wagon/CMakeFiles/wagon.dir
+/home/runner/Sem3Lab2/2Simple/build/wagon/CMakeFiles/edit_cache.dir
+/home/runner/Sem3Lab2/2Simple/build/wagon/CMakeFiles/rebuild_cache.dir

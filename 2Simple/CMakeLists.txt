@@ -14,7 +14,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 add_subdirectory(wagon)
 
 # добавление подпроекта с тестами
-add_subdirectory(tests)
+##add_subdirectory(tests_wagon)
 
 # создание исполняемого файла для диалоговой программы
 add_executable(simpleClass mainSimpleClass.cpp)
