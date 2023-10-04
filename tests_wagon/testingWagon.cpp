@@ -1,6 +1,6 @@
 #define CATCH_CONFIG_MAIN // Просит Catch2 реализовать свой main, снимая эту
                           // задачу с разработчика
-#include "Wagon.h" // Включаем заголовочный файл с объявлениями классов
+#include "../wagon/wagon.h" // Включаем заголовочный файл с объявлениями классов
 #include <catch2/catch.hpp>
 
 using namespace lab2SimpleClass;

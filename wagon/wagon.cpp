@@ -1,4 +1,4 @@
-#include "Wagon.h"
+#include "wagon.h"
 #include <cstring>
 #include <iostream>
 #include <limits>

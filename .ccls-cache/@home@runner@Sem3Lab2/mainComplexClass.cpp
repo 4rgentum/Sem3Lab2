@@ -1,4 +1,4 @@
-#include "Train.h"
+#include "train/train.h"
 #include <iostream>
 
 using namespace lab2SimpleClass;

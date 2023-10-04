@@ -13,14 +13,11 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 # добавление подпроекта с библиотекой
 add_subdirectory(wagon)
 
-# добавление подпроекта с тестами
-add_subdirectory(testsSimpleClass)
-
 # создание исполняемого файла для диалоговой программы
-add_executable(SimpleClass mainSimpleClass.cpp)
+add_executable(simpleClass mainSimpleClass.cpp)
 
 # подключение библиотеки circle к диалоговой программе
-target_link_libraries(simpleslass wagon)
+target_link_libraries(simpleClass wagon)
 
 
 # для сборки из консоли:
@@ -29,3 +26,4 @@ target_link_libraries(simpleslass wagon)
 # cd build      # переход в директорию сборки
 # cmake ..      # генерация файлов сборки на основе CMakeLists.txt
 # make          # сборка проекта
+
