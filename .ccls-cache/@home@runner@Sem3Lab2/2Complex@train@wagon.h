@@ -9,7 +9,7 @@
 
 namespace lab2SimpleClass {
 
-  // шаблонная функция ввода одного числа
+  /*// шаблонная функция ввода одного числа
   template <class T>
   T getNum(T min = std::numeric_limits<T>::min(), T max = std::numeric_limits<T>::max()) {
     T a;
@@ -31,7 +31,7 @@ namespace lab2SimpleClass {
         std::cerr << "Number out of range. Please enter a valid number." << std::endl;
       }
     }
-  }
+  }*/
 
   // Определение перечисления для типов вагонов
   enum class WagonType { SITTING, ECONOMY, LUXURY, RESTAURANT };
@@ -66,6 +66,11 @@ namespace lab2SimpleClass {
       void writeToOutput() const; // Метод для вывода состояния вагона
       
       void transferPassengers(Wagon &otherWagon); // Метод для пересадки пассажиров из текущего вагона в другой
+
+      Wagon &operator>>(Wagon &other); // Перегрузка оператора >> при перемещении пассажиров из одного вагона в другой
+      friend std::istream& operator>>(std::istream& is, Wagon& wagon); // Перегрузка оператора >> для ввода экземляра вагона
+      
+      friend std::ostream& operator<<(std::ostream& os, const Wagon& wagon); // Перегрузка оператора "<<" для вывода вагона в выходной поток
   };
   
 } // namespace lab2SimpleClass

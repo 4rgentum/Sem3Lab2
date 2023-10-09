@@ -32,8 +32,8 @@ namespace lab2ComplexClass {
       // Считываем количество вагонов
       std::cin >> numWagons;
 
-      if (numWagons > MAX_WAGONS) {
-        throw std::invalid_argument("Number of wagons exceeds the maximum allowed.");
+      if (numWagons > MAX_WAGONS || numWagons < 0) {
+        throw;
       }
 
       // Считываем информацию о каждом вагоне
@@ -41,8 +41,8 @@ namespace lab2ComplexClass {
         wagons[i].readFromInput();
       }
     } catch (const std::exception& e) {
-      std::cerr << "Error while reading train from input: " << e.what() << std::endl;
-      throw;
+      //std::cerr << "Error while reading train from input: " << e.what() << std::endl;
+      throw std::invalid_argument("Error while reading train from input.");
     }
   }
 
@@ -57,8 +57,8 @@ namespace lab2ComplexClass {
         wagons[i].writeToOutput();
       }
     } catch (const std::exception& e) {
-      std::cerr << "Error while writing train to output: " << e.what() << std::endl;
-      throw;
+      //std::cerr << "Error while writing train to output: " << e.what() << std::endl;
+      throw std::invalid_argument("Error while reading train from output.");
     }
   }
 
@@ -66,13 +66,13 @@ namespace lab2ComplexClass {
   void Train::addWagon(const Wagon &wagon) {
   try {
     if (numWagons >= MAX_WAGONS) {
-      throw std::overflow_error("Maximum number of wagons reached.");
+      throw;
     }
 
     wagons[numWagons++] = wagon;
   } catch (const std::exception &e) {
-    std::cerr << "Error while adding wagon to train: " << e.what() << std::endl;
-    throw;
+    //std::cerr << "Error while adding wagon to train: " << e.what() << std::endl;
+    throw std::invalid_argument("Error while adding wagon to train.");
   }
 }
 
@@ -80,13 +80,13 @@ namespace lab2ComplexClass {
   const Wagon& Train::getWagonByIndex(int index) const {
     try {
       if (index < 0 || index >= numWagons) {
-        throw std::out_of_range("Invalid wagon index.");
+        throw;
       }
 
       return wagons[index];
     } catch (const std::exception &e) {
-      std::cerr << "Error while getting wagon by index: " << e.what() << std::endl;
-      throw;
+      //std::cerr << "Error while getting wagon by index: " << e.what() << std::endl;
+      throw std::invalid_argument("Error while getting wagon by index.");
     }
   }
 
@@ -94,7 +94,7 @@ namespace lab2ComplexClass {
   void Train::removeWagonByIndex(int index) {
     try {
       if (index < 0 || index >= numWagons) {
-        throw std::out_of_range("Invalid wagon index.");
+        throw;
       }
 
       // Сдвигаем все вагоны после удаляемого влево
@@ -105,8 +105,8 @@ namespace lab2ComplexClass {
       // Уменьшаем количество вагонов в поезде
       --numWagons;
     } catch (const std::exception &e) {
-      std::cerr << "Error while removing wagon by index: " << e.what() << std::endl;
-      throw;
+      //std::cerr << "Error while removing wagon by index: " << e.what() << std::endl;
+      throw std::invalid_argument("Error while removing wagon by index.");
     }
   }
 
@@ -145,8 +145,8 @@ namespace lab2ComplexClass {
       // Посадка пассажиров в наиболее свободный вагон заданного класса
       wagons[mostAvailableIndex].boardPassengers(passengers);
     } catch (const std::exception &e) {
-      std::cerr << "Error while boarding passengers: " << e.what() << std::endl;
-      throw;
+      //std::cerr << "Error while boarding passengers: " << e.what() << std::endl;
+      throw std::invalid_argument("Error while boarding passengers.");
     }
   }
 
@@ -258,35 +258,100 @@ namespace lab2ComplexClass {
         // Увеличиваем количество вагонов
         numWagons++;
     } catch (const std::exception& e) {
-        std::cerr << "Error when adding a wagon: " << e.what() << std::endl;
+        //std::cerr << "Error when adding a wagon: " << e.what() << std::endl;
+        throw std::invalid_argument("Error when adding a wagon.");
     }
+  }
+
+  // Исключить пассажиров вагонов класса "люкс" из расчета
+  void Train::excludeLuxuryPassengers(int& totalPassengers, int& midPassengers) const {
+    int luxuryPassengers = 0;
+    for (int i = 0; i < numWagons; i++) {
+      if (wagons[i].getType() == lab2SimpleClass::WagonType::LUXURY) {
+        luxuryPassengers += wagons[i].getOccupiedSeats();
+      }
+    }
+    totalPassengers -= luxuryPassengers;
+    midPassengers -= luxuryPassengers;
   }
   
   // Поместить вагон-ресторан оптимальным образом, то есть таким, чтобы до и после него в поезде было примерно одинаковое количество пассажиров
   void Train::optimizeRestaurantPlacement() {
     int totalPassengers = 0;
     for (int i = 0; i < numWagons; i++) {
-      totalPassengers += wagons[i].getOccupiedSeats();
+        totalPassengers += wagons[i].getOccupiedSeats();
     }
 
     int midPassengers = totalPassengers / 2;
+    excludeLuxuryPassengers(totalPassengers, midPassengers);
+
     int needPosition = 0;
     for (int j = 0; j < numWagons; j++) {
-      totalPassengers -= wagons[j].getOccupiedSeats();
-      if (totalPassengers > midPassengers) {
-        j--;
-        needPosition = j;
-        break;
-      } else if (totalPassengers == midPassengers) {
-        needPosition = j;
-      }
+        totalPassengers -= wagons[j].getOccupiedSeats();
+        if (totalPassengers > midPassengers) {
+            j--;
+            needPosition = j;
+            break;
+        } else if (totalPassengers == midPassengers) {
+            needPosition = j;
+        }
     }
-    
+
     // Вставляем ресторан-вагон на оптимальную позицию
     Wagon restaurantWagon;
     restaurantWagon.setType(lab2SimpleClass::WagonType::RESTAURANT);
     addWagonAtIndex(restaurantWagon, needPosition);
-    
+  }
+
+  // Реализация метода добавления нового вагона в поезд
+  void Train::operator+=(const Wagon& wagon) {
+    if (numWagons >= MAX_WAGONS) {
+      throw std::invalid_argument("The maximum number of wagons has been reached.");
+    }
+
+    wagons[numWagons++] = wagon;
   }
   
+  // Реализация метода получения вагона по его номеру (возврат по ссылке)
+  Wagon& Train::operator[](int index) {
+    if (index < 0 || index >= numWagons) {
+      throw std::invalid_argument("Invalid wagon index.");
+    }
+
+    return wagons[index];
+  }
+
+  const Wagon& Train::operator[](int index) const {
+    if (index < 0 || index >= numWagons) {
+      throw std::out_of_range("Index out of range");
+    }
+    return wagons[index];
+  }
+  
+  // Реализация перегрузки оператора "=" для копирования экземпляра класса
+  Train& Train::operator=(const Train& other) {
+    if (this == &other) {
+      return *this; // Проверка на самоприсваивание
+    }
+
+    numWagons = other.numWagons;
+    for (int i = 0; i < numWagons; ++i) {
+      wagons[i] = other.wagons[i];
+    }
+
+    return *this;
+  }
+
+  // Перегрузка оператора >> для ввода экземляра поезда
+  std::istream& operator>>(std::istream& is, Train& train) {
+    train.readFromInput();
+    return is;
+  }
+  
+  // Реализация перегрузки оператора "<<" для вывода поезда в выходной поток
+  std::ostream& operator<<(std::ostream& os, const Train& train) {
+    train.writeToOutput();
+    return os;
+  }
+    
 } // namespace lab2ComplexClass

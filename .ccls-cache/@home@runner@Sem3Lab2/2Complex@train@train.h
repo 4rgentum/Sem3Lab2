@@ -44,10 +44,24 @@ namespace lab2ComplexClass {
       void optimizeTrain();
 
       // Вспомагетльный метод добавления по индексу
-    void addWagonAtIndex(const Wagon& newWagon, int index);
+      void addWagonAtIndex(const Wagon& newWagon, int index);
+      
+      // Исключить пассажиров вагонов класса "люкс" из расчета
+      void excludeLuxuryPassengers(int& totalPassengers, int& midPassengers) const;
   
       // Поместить вагон-ресторан оптимальным образом, то есть таким, чтобы до и после него в поезде было примерно одинаковое количество пассажиров
       void optimizeRestaurantPlacement();
+
+      void operator+=(const Wagon& wagon); // Добавление нового вагона в поезд
+
+      Wagon& operator[](int index); // Получение вагона по его номеру (возврат по ссылке)
+      const Wagon& operator[](int index) const;
+
+      Train& operator=(const Train& other); // Перегрузка оператора "=" для копирования экземпляра класса
+
+      friend std::istream& operator>>(std::istream& is, Train& train); // Перегрузка оператора >> для ввода экземляра поезда
+  
+      friend std::ostream& operator<<(std::ostream& os, const Train& train); // Перегрузка оператора "<<" для вывода поезда в выходной поток
   };
   
 } // namespace lab2ComplexClass

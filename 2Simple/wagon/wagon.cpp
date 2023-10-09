@@ -58,7 +58,8 @@ namespace lab2SimpleClass {
         }
       }
     } catch (const std::exception &e) {
-      std::cerr << "Error: " << e.what() << std::endl;
+      //std::cerr << "Error: " << e.what() << std::endl;
+      throw;
     }
   }
 
@@ -73,7 +74,8 @@ namespace lab2SimpleClass {
         }
       }
     } catch (const std::exception &e) {
-      std::cerr << "Error: " << e.what() << std::endl;
+      //std::cerr << "Error: " << e.what() << std::endl;
+      throw;
     }
   }
 
@@ -94,7 +96,8 @@ namespace lab2SimpleClass {
       }
       occupiedSeats = seats;
     } catch (const std::exception &e) {
-      std::cerr << "Error: " << e.what() << std::endl;
+      //std::cerr << "Error: " << e.what() << std::endl;
+      throw;
     }  
   }
 
@@ -103,16 +106,40 @@ namespace lab2SimpleClass {
   // Метод для ввода состояния вагона
   void Wagon::readFromInput() {
     try {
-      int maxCapacity = getNum<int>(0); 
-      int occupiedSeats = getNum<int>(0, maxCapacity); 
-      int typeInt = getNum<int>(0, 3);
-      WagonType type = static_cast<WagonType>(typeInt);
+      std::cin >> maxCapacity;
+      std::cin >> occupiedSeats;
 
-      setMaxCapacity(maxCapacity);
-      setOccupiedSeats(occupiedSeats);
-      setType(type);
+      int typeInt;
+      std::cin >> typeInt;
+
+      // Проверяем, не достигнут ли конец файла (CTRL+D)
+      if (std::cin.eof()) {
+        throw std::runtime_error("EOF reached.");
+      }
+
+      if (typeInt < 0 || typeInt > 3) {
+        throw std::invalid_argument("Invalid wagon type.");
+      }
+    
+     type = static_cast<WagonType>(typeInt);
+    
+      if (type == WagonType::RESTAURANT) {
+        maxCapacity = 0;
+      }
+    
+      if (maxCapacity < 0 || occupiedSeats < 0 || (maxCapacity < occupiedSeats && maxCapacity != 0)) {
+        throw std::invalid_argument("Invalid wagon data.");
+      }
+
+      if (type == WagonType::RESTAURANT) {
+        maxCapacity = 0;
+      }
+
+      if (maxCapacity < 0 || occupiedSeats < 0 || (maxCapacity < occupiedSeats && maxCapacity != 0) || typeInt < 0 || typeInt > 3) {
+        throw;
+      }
     } catch (const std::exception& e) {
-      std::cerr << "Error while reading wagon from input: " << e.what() << std::endl;
+      
       throw;
     }
   }
@@ -122,8 +149,8 @@ namespace lab2SimpleClass {
     try {
       std::cout << getMaxCapacity() << " " << getOccupiedSeats() << " " << static_cast<int>(getType()) << std::endl;
     } catch (const std::exception& e) {
-        std::cerr << "Error while writing wagon to output: " << e.what() << std::endl;
-        throw;
+        //std::cerr << "Error while writing wagon to output: " << e.what() << std::endl;
+        throw std::invalid_argument("Error while reading wagon from output.");
     }
   }
 
@@ -135,7 +162,7 @@ namespace lab2SimpleClass {
 
     try {
       if (getType() != otherWagon.getType()) {
-         throw std::invalid_argument("Passengers cannot be transferred to or from differrent wagons");
+         throw std::invalid_argument("Incorrect type of wagons");
       } else {
         int totalOccupiedSeats = occupiedSeats + otherWagon.getOccupiedSeats();
         int totalMaxCapacity = maxCapacity + otherWagon.getMaxCapacity();
@@ -153,8 +180,27 @@ namespace lab2SimpleClass {
       }
     } catch (const std::exception &e) {
       // Обработка исключений, если что-то идет не так во время пересадки
-      std::cerr << "Error during passenger transfer: " << e.what() << std::endl;
+      //std::cerr << "Error during passenger transfer: " << e.what() << std::endl;
+      throw std::invalid_argument("Error during passenger transfer.");
     }
   }
 
+  // Перегрузка оператора >> при перемещении пассажиров из одного вагона в другой
+  Wagon &Wagon::operator >>(Wagon &other) {
+    this->transferPassengers(other);
+    return *this;
+  }
+
+  // Перегрузка оператора >> для ввода экземляра вагона
+  std::istream& operator>>(std::istream& is, Wagon& wagon) {
+    wagon.readFromInput();
+    return is;
+  }
+  
+  // Реализация перегрузки оператора "<<" для вывода вагона в выходной поток
+  std::ostream& operator<<(std::ostream& os, const Wagon& wagon) {
+    wagon.writeToOutput();
+    return os;
+  }
+    
 } // namespace lab2SimpleClass

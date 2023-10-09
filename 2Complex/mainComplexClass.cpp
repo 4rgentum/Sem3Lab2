@@ -6,59 +6,55 @@ using namespace lab2ComplexClass;
 
 int main() {
   try {
-    // Создаем несколько вагонов
-    Wagon wagon1(WagonType::SITTING);
-    Wagon wagon2(WagonType::ECONOMY);
-    Wagon wagon3(WagonType::LUXURY);
-    
-    // Создаем поезд и добавляем вагоны
-    Train train;
-    train.addWagon(wagon1);
-    train.addWagon(wagon2);
-    train.addWagon(wagon3);
+    // Создаем пустой поезд
+    Train train1;
 
-    std::cout << "Initial Train State:" << std::endl;
-    train.writeToOutput();
+    // Создаем вагоны для поезда
+    Wagon wagon1(50, 20, WagonType::ECONOMY);
+    Wagon wagon2(100, 40, WagonType::SITTING);
+    Wagon wagon3(30, 20, WagonType::LUXURY);
 
-    // Вводим вагон из входного потока
-    Wagon wagonFromInput;
-    std::cout << "Enter details for a new wagon:" << std::endl;
-    wagonFromInput.readFromInput();
+    // Добавляем вагоны в поезд
+    train1 += wagon1;
+    train1 += wagon2;
+    train1 += wagon3;
 
-    // Добавляем вагон в поезд
-    train.addWagon(wagonFromInput);
+    // Выводим информацию о поезде
+    std::cout << "Train 1:" << std::endl;
+    std::cout << train1;
 
-    std::cout << "\nTrain State After Adding Wagon from Input:" << std::endl;
-    train.writeToOutput();
+    // Добавляем пассажиров в наиболее свободный вагон
+    train1.boardPassengersToMostAvailableWagon(10, WagonType::ECONOMY);
 
-    // Добавляем пассажиров в наиболее свободные вагоны
-    train.boardPassengersToMostAvailableWagon(50, WagonType::SITTING);
-    train.boardPassengersToMostAvailableWagon(30, WagonType::ECONOMY);
-    train.boardPassengersToMostAvailableWagon(20, WagonType::LUXURY);
-
-    std::cout << "\nTrain State After Boarding Passengers:" << std::endl;
-    train.writeToOutput();
+    // Выводим информацию о поезде после посадки пассажиров
+    std::cout << "Train 1 after boarding passengers:" << std::endl;
+    std::cout << train1;
 
     // Перераспределяем пассажиров
-    train.redistributePassengers();
+    train1.redistributePassengers();
 
-    std::cout << "\nTrain State After Redistributing Passengers:" << std::endl;
-    train.writeToOutput();
+    // Выводим информацию о поезде после перераспределения пассажиров
+    std::cout << "Train 1 after redistributing passengers:" << std::endl;
+    std::cout << train1;
 
-    // Оптимизируем поезд
-    train.optimizeTrain();
+    // Минимизируем количество вагонов
+    train1.optimizeTrain();
 
-    std::cout << "\nTrain State After Optimizing Train:" << std::endl;
-    train.writeToOutput();
+    // Выводим информацию о поезде после оптимизации
+    std::cout << "Train 1 after optimization:" << std::endl;
+    std::cout << train1;
 
-    // Помещаем ресторан-вагон оптимальным образом
-    train.optimizeRestaurantPlacement();
+    // Создаем еще один поезд с помощью конструктора с инициализацией из массива вагонов
+    Wagon wagons[] = {wagon1, wagon2, wagon3};
+    Train train2(wagons, 3);
 
-    std::cout << "\nTrain State After Optimizing Restaurant Placement:" << std::endl;
-    train.writeToOutput();
+    // Выводим информацию о втором поезде
+    std::cout << "Train 2:" << std::endl;
+    std::cout << train2;
+
+    return 0;
   } catch (const std::exception& e) {
     std::cerr << "Error: " << e.what() << std::endl;
+    return 1;
   }
-
-  return 0;
 }
